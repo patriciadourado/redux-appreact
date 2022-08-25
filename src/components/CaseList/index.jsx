@@ -1,11 +1,13 @@
 import React, {useState} from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { addTodo, deleteTodo } from "../../actions/index";
 import {
   ButtonAdd,
   ButtonDelete,
   Checkbox,
   Container,
   ContainerButton,
+  Filter,
   InputTitle,
   Item,
   Title,
@@ -14,37 +16,12 @@ import {
   WrapperTodo,
 } from "./styles";
 
-function addItemAction(title, id) {
-  return { type: "ADD_ITEM", title, id};
-}
-
-function deleteItemAction(title, id) {
-  return { type: "DELETE_ITEM", title, id };
-}
-
 function CaseList() {
   
-  //const ids = useSelector((state) => state.ids);
-  const titles = useSelector(state => state.titles);
-
+  const [inputData, setInputData] = useState('');
+  const list = useSelector((state) => state.todoReducers.list);
   const dispatch = useDispatch();
-  
-  var i = 1;
-  const [itemTitle, setItemTitle] = useState('');
-  const [itemId, setItemId] = useState(0);
 
-  const handleTitleChange = (e) => {
-    setItemTitle(e.target.value);
-    setItemId(i++);
-  };
-
-  function addItem() {
-    dispatch(addItemAction(itemTitle, itemId));
-  }
-
-  function deleteItem(title, id) {
-    dispatch(deleteItemAction(title, id));
-  }
   const [data, setData] = React.useState(null);
 
   React.useEffect(() => {
@@ -57,33 +34,45 @@ function CaseList() {
     <WrapperTodo>
       <Title >To do List</Title>
       <Title>{!data ? "Loading..." : data}</Title>
+      <Filter>
+        <select name="isComplete">
+          <option value="all">all</option>
+          <option value="incomplete">incomplete</option>
+          <option value="complete">complete</option>
+        </select>
+      </Filter>
       <Container>
         <WrapperCase>
           <ContainerButton>
             <InputTitle
               type="text"
               placeholder="Write your item"
-              value={itemTitle}
-              onChange={handleTitleChange}
+              value={inputData}
+              onChange={(event) => setInputData(event.target.value)}
               required
             ></InputTitle>
 
-            <ButtonAdd type="button" alt="Add Todo" onClick={addItem}>
+            <ButtonAdd type="button" alt="Add Todo" onClick={() => dispatch(addTodo(inputData),
+                                                            setInputData(''))}>
               <i className='bx bx-plus'></i> Item
             </ButtonAdd>
           </ContainerButton>
 
-          {titles.map((title, index) => (
-            <WrapperItem key={index}>
-              <Checkbox type='checkbox' id={title} name={title}/>
-              
-              <Item key={index}> {title} </Item>
-              <ButtonDelete type="button" alt="Add Todo" onClick={deleteItem(title, index)}>
-                <i className='bx bxs-trash-alt'></i>
-              </ButtonDelete>
-            
-            </WrapperItem>
-          ))}
+            {
+              list.map((elem) => {
+                return(
+                  <WrapperItem>
+                    <Checkbox type="checkbox"/>
+                    <Item key={elem.id}> {elem.data} </Item>
+                    <ButtonDelete type="button" alt="delete Todo" onClick={() => dispatch(deleteTodo(elem.id),
+                      setInputData(''))}>
+                      <i className='bx bxs-trash-alt'></i>
+                    </ButtonDelete>
+                  </WrapperItem>
+                )
+              })
+            }
+          
         </WrapperCase>
       </Container>
     </WrapperTodo>

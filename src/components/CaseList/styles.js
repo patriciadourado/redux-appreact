@@ -30,6 +30,15 @@ export const InputTitle = styled.input`
   }
 `;
 
+export const Filter = styled.div`
+  display: flex;
+  margin: 5rem auto;
+  margin-right: 370px;
+  width: 100px;
+  justify-content: center;
+  margin-top: 40rem;
+`;
+
 export const Item = styled.label`
   width: 400px;
   height: 40px;
